@@ -97,10 +97,12 @@ def const_9_object_object_fields(curs):
     return res0[0] == 2
 
 
-def const_10_existence_ocel_id_obj_type_spec_tables(curs):
+def const_10_existence_ocel_id_obj_type_spec_tables(curs, num_types: int):
     query = """SELECT m.tbl_name, Count(*) FROM sqlite_master m JOIN object_map_type ty on m.tbl_name = "object_" || ty.ocel_type_map JOIN pragma_table_info(m.tbl_name) p WHERE m.type = "table" AND p.name = "ocel_id" GROUP BY m.tbl_name;"""
     curs.execute(query)
     res = curs.fetchall()
+    if len(res) != num_types:
+        return False
 
     ret = True
     for el in res:
@@ -111,10 +113,12 @@ def const_10_existence_ocel_id_obj_type_spec_tables(curs):
     return ret
 
 
-def const_11_existence_ocel_id_ev_type_spec_tables(curs):
+def const_11_existence_ocel_id_ev_type_spec_tables(curs, num_types: int):
     query = """SELECT m.tbl_name, Count(*) FROM sqlite_master m JOIN event_map_type ty on m.tbl_name = "event_" || ty.ocel_type_map JOIN pragma_table_info(m.tbl_name) p WHERE m.type = "table" AND p.name = "ocel_id" GROUP BY m.tbl_name;"""
     curs.execute(query)
     res = curs.fetchall()
+    if len(res) != num_types:
+        return False
 
     ret = True
     for el in res:
@@ -125,10 +129,12 @@ def const_11_existence_ocel_id_ev_type_spec_tables(curs):
     return ret
 
 
-def const_12_existence_type_ocel_time_obj_type_spec_tables(curs):
+def const_12_existence_type_ocel_time_obj_type_spec_tables(curs, num_types: int):
     query = """SELECT m.tbl_name, Count(*) FROM sqlite_master m JOIN object_map_type ty on m.tbl_name = "object_" || ty.ocel_type_map JOIN pragma_table_info(m.tbl_name) p WHERE m.type = "table" AND p.name = "ocel_time" AND p.type = "TIMESTAMP" GROUP BY m.tbl_name;"""
     curs.execute(query)
     res = curs.fetchall()
+    if len(res) != num_types:
+        return False
 
     ret = True
     for el in res:
@@ -139,10 +145,12 @@ def const_12_existence_type_ocel_time_obj_type_spec_tables(curs):
     return ret
 
 
-def const_13_existence_type_ocel_time_ev_type_spec_tables(curs):
+def const_13_existence_type_ocel_time_ev_type_spec_tables(curs, num_types: int):
     query = """SELECT m.tbl_name, Count(*) FROM sqlite_master m JOIN event_map_type ty on m.tbl_name = "event_" || ty.ocel_type_map JOIN pragma_table_info(m.tbl_name) p WHERE m.type = "table" AND p.name = "ocel_time" AND p.type = "TIMESTAMP" GROUP BY m.tbl_name;"""
     curs.execute(query)
     res = curs.fetchall()
+    if len(res) != num_types:
+        return False
 
     ret = True
     for el in res:
@@ -156,63 +164,41 @@ def const_13_existence_type_ocel_time_ev_type_spec_tables(curs):
 def const_14_primary_key_object_event_map_type_tables(curs):
     query = """SELECT Count(*) FROM (SELECT m.tbl_name, p.* FROM sqlite_master m JOIN pragma_table_info(m.tbl_name) p WHERE m.type = "table" AND m.tbl_name IN ("object_map_type", "event_map_type") AND p.name = "ocel_type" AND p.pk > 0);"""
     curs.execute(query)
-    res = curs.fetchall()
+    res0 = curs.fetchone()
 
-    ret = True
-    for el in res:
-        if el[0] != 2:
-            ret = False
-            break
-
-    return ret
+    return res0[0] == 2
 
 
 def const_15_primary_key_object_event_tables(curs):
     query = """SELECT Count(*) FROM (SELECT m.tbl_name, p.* FROM sqlite_master m JOIN pragma_table_info(m.tbl_name) p WHERE m.type = "table" AND m.tbl_name IN ("object", "event") AND p.name = "ocel_id" AND p.pk > 0);"""
     curs.execute(query)
-    res = curs.fetchall()
+    res0 = curs.fetchone()
 
-    ret = True
-    for el in res:
-        if el[0] != 2:
-            ret = False
-            break
-
-    return ret
+    return res0[0] == 2
 
 
 def const_16_primary_key_event_object_table(curs):
     query = """SELECT Count(*) FROM (SELECT m.tbl_name, p.* FROM sqlite_master m JOIN pragma_table_info(m.tbl_name) p WHERE m.type = "table" AND m.tbl_name = "event_object" AND p.name IN ("ocel_event_id", "ocel_object_id", "ocel_qualifier") AND p.pk > 0);"""
     curs.execute(query)
-    res = curs.fetchall()
+    res0 = curs.fetchone()
 
-    ret = True
-    for el in res:
-        if el[0] != 3:
-            ret = False
-            break
-
-    return ret
+    return res0[0] == 3
 
 
 def const_17_primary_key_object_object_table(curs):
     query = """SELECT Count(*) FROM (SELECT m.tbl_name, p.* FROM sqlite_master m JOIN pragma_table_info(m.tbl_name) p WHERE m.type = "table" AND m.tbl_name = "object_object" AND p.name IN ("ocel_source_id", "ocel_target_id", "ocel_qualifier") AND p.pk > 0);"""
     curs.execute(query)
-    res = curs.fetchall()
+    res0 = curs.fetchone()
 
-    ret = True
-    for el in res:
-        if el[0] != 3:
-            ret = False
-            break
-
-    return ret
+    return res0[0] == 3
 
 
-def const_18_primary_key_event_type_spec_tables(curs):
+def const_18_primary_key_event_type_spec_tables(curs, num_types: int):
     query = """SELECT m.tbl_name, sum(p.pk) FROM sqlite_master m JOIN event_map_type ty on m.tbl_name = "event_" || ty.ocel_type_map JOIN pragma_table_info(m.tbl_name) p WHERE m.type = "table" AND p.name = "ocel_id" GROUP BY m.tbl_name;"""
     curs.execute(query)
     res = curs.fetchall()
+    if len(res) != num_types:
+        return False
 
     ret = True
     for el in res:
@@ -305,6 +291,15 @@ constraints = {
     "const_23_foreign_key_event_type_specific": const_23_foreign_key_event_type_specific,
     "const_24_foreign_key_object_type_specific": const_24_foreign_key_object_type_specific,
 }
+constraints_obj_type_dependent = [
+    "const_10_existence_ocel_id_obj_type_spec_tables",
+    "const_12_existence_type_ocel_time_obj_type_spec_tables",
+]
+constraints_ev_type_dependent = [
+    "const_11_existence_ocel_id_ev_type_spec_tables",
+    "const_13_existence_type_ocel_time_ev_type_spec_tables",
+    "const_18_primary_key_event_type_spec_tables",
+]
 
 
 def apply(file_path: str) -> Tuple[Collection[str], Collection[str]]:
@@ -330,9 +325,17 @@ def apply(file_path: str) -> Tuple[Collection[str], Collection[str]]:
 
     satisfied = []
     unsatisfied = []
+    
+    num_obj_types = curs.execute("""SELECT COUNT(*) FROM object_map_type""").fetchone()[0]
+    num_ev_types = curs.execute("""SELECT COUNT(*) FROM event_map_type""").fetchone()[0]
 
     for c in constraints:
-        res = constraints[c](curs)
+        if c in constraints_obj_type_dependent:
+            res = constraints[c](curs, num_types=num_obj_types)
+        elif c in constraints_ev_type_dependent:
+            res = constraints[c](curs, num_types=num_ev_types)
+        else:
+            res = constraints[c](curs)
         if res:
             satisfied.append(c)
         else:
