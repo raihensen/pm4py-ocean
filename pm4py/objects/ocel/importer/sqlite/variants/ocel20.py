@@ -19,7 +19,7 @@ from typing import Optional, Dict, Any
 
 from pm4py.objects.ocel import constants
 from pm4py.objects.ocel.obj import OCEL
-from pm4py.util import exec_utils, pandas_utils
+from pm4py.util import exec_utils
 import pandas as pd
 from pm4py.objects.ocel.util import ocel_consistency
 from pm4py.objects.ocel.util import filtering_utils
@@ -77,21 +77,17 @@ def apply(file_path: str, parameters: Optional[Dict[Any, Any]] = None):
     EVENTS = pd.read_sql("SELECT * FROM event", conn)
     OBJECTS = pd.read_sql("SELECT * FROM object", conn)
 
-    etypes = sorted(pandas_utils.format_unique(EVENTS["ocel_type"].unique()))
-    otypes = sorted(pandas_utils.format_unique(OBJECTS["ocel_type"].unique()))
+    etypes = sorted(EVENTS["ocel_type"].unique())
+    otypes = sorted(OBJECTS["ocel_type"].unique())
 
-    EVENTS = EVENTS.to_dict("records")
-    OBJECTS = OBJECTS.to_dict("records")
-    events_id_type = {x["ocel_id"]: x["ocel_type"] for x in EVENTS}
-    objects_id_type = {x["ocel_id"]: x["ocel_type"] for x in OBJECTS}
+    events_id_type = EVENTS.set_index("ocel_id")["ocel_type"].rename(event_activity)
+    objects_id_type = OBJECTS.set_index("ocel_id")["ocel_type"].rename(object_type)
 
     EVENT_CORR_TYPE = pd.read_sql("SELECT * FROM event_map_type", conn)
     OBJECT_CORR_TYPE = pd.read_sql("SELECT * FROM object_map_type", conn)
-    EVENT_CORR_TYPE = EVENT_CORR_TYPE.to_dict("records")
-    OBJECT_CORR_TYPE = OBJECT_CORR_TYPE.to_dict("records")
 
-    events_type_map = {x["ocel_type"]: x["ocel_type_map"] for x in EVENT_CORR_TYPE}
-    objects_type_map = {x["ocel_type"]: x["ocel_type_map"] for x in OBJECT_CORR_TYPE}
+    events_type_map = EVENT_CORR_TYPE.set_index("ocel_type")["ocel_type_map"].to_dict()
+    objects_type_map = OBJECT_CORR_TYPE.set_index("ocel_type")["ocel_type_map"].to_dict()
 
     event_types_coll = []
     object_types_coll = []
@@ -100,23 +96,22 @@ def apply(file_path: str, parameters: Optional[Dict[Any, Any]] = None):
         act_red = events_type_map[act]
         df = pd.read_sql("SELECT * FROM event_"+act_red, conn)
         df = df.rename(columns={"ocel_id": event_id, "ocel_time": event_timestamp})
+        df[event_activity] = act
         event_types_coll.append(df)
 
     for ot in otypes:
         ot_red = objects_type_map[ot]
         df = pd.read_sql("SELECT * FROM object_"+ot_red, conn)
         df = df.rename(columns={"ocel_id": object_id, "ocel_time": event_timestamp})
+        df[object_type] = ot
         object_types_coll.append(df)
 
-    event_types_coll = pandas_utils.concat(event_types_coll)
-    event_types_coll[event_activity] = event_types_coll[event_id].map(events_id_type)
+    event_types_coll = pd.concat(event_types_coll)
     event_types_coll = dataframe_utils.convert_timestamp_columns_in_df(event_types_coll, timest_format=pm4_constants.DEFAULT_TIMESTAMP_PARSE_FORMAT, timest_columns=[event_timestamp])
-    object_types_coll = pandas_utils.concat(object_types_coll)
-    object_types_coll[object_type] = object_types_coll[object_id].map(objects_id_type)
+    object_types_coll = pd.concat(object_types_coll)
     object_types_coll = object_types_coll.rename(columns={"ocel_changed_field": changed_field})
 
-    events_timestamp = event_types_coll[[event_id, event_timestamp]].to_dict('records')
-    events_timestamp = {x[event_id]: x[event_timestamp] for x in events_timestamp}
+    events_timestamp = event_types_coll.set_index(event_id)[event_timestamp]
     object_types_coll[cumcount_field] = object_types_coll.groupby(object_id).cumcount()
 
     if changed_field in object_types_coll:
@@ -137,9 +132,9 @@ def apply(file_path: str, parameters: Optional[Dict[Any, Any]] = None):
 
     E2O = pd.read_sql("SELECT * FROM event_object", conn)
     E2O = E2O.rename(columns={"ocel_event_id": event_id, "ocel_object_id": object_id, "ocel_qualifier": qualifier_field})
-    E2O[event_activity] = E2O[event_id].map(events_id_type)
-    E2O[event_timestamp] = E2O[event_id].map(events_timestamp)
-    E2O[object_type] = E2O[object_id].map(objects_id_type)
+    E2O = E2O.join(events_id_type, on=event_id)
+    E2O = E2O.join(events_timestamp, on=event_id)
+    E2O = E2O.join(objects_id_type, on=object_id)
 
     O2O = pd.read_sql("SELECT * FROM object_object", conn)
     O2O = O2O.rename(columns={"ocel_source_id": object_id, "ocel_target_id": object_id+"_2", "ocel_qualifier": qualifier_field})

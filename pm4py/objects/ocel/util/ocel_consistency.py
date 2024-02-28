@@ -45,16 +45,19 @@ def apply(ocel: OCEL, parameters: Optional[Dict[Any, Any]] = None) -> OCEL:
         "relations": ["ocel:eid", "ocel:oid", "ocel:activity", "ocel:type"],
         "o2o": ["ocel:oid", "ocel:oid_2"],
         "e2e": ["ocel:eid", "ocel:eid_2"],
-        "object_changes": ["ocel:oid"]
+        "object_changes": ["ocel:oid", "ocel:type"]
     }
 
-    for tab in fields:
+    for tab, tfields in fields.items():
         df = getattr(ocel, tab)
-        for fie in fields[tab]:
-            df = df.dropna(subset=[fie], how="any")
-            df[fie] = df[fie].astype("string")
-            df = df.dropna(subset=[fie], how="any")
-            df = df[df[fie].str.len() > 0]
-            setattr(ocel, tab, df)
+        df[tfields] = df[tfields].astype("string")
+        # df[tfields] = df[tfields].replace("", pd.NA)
+        df = df.dropna(subset=tfields, how="any")
+        filter = True
+        for fie in tfields:
+            filter = filter & (df[fie].str.len() > 0)
+        if filter is not True:
+            df = df[filter]
+        setattr(ocel, tab, df)
 
     return ocel
