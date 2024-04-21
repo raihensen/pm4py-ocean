@@ -19,7 +19,6 @@ from enum import Enum
 from pm4py.util import exec_utils
 from typing import Optional, Dict, Any
 import base64
-import requests
 from pm4py.util import constants
 
 
@@ -35,6 +34,8 @@ def encode_image(image_path):
 
 
 def apply(prompt: str, parameters: Optional[Dict[Any, Any]] = None) -> str:
+    import requests
+
     if parameters is None:
         parameters = {}
 
@@ -70,5 +71,9 @@ def apply(prompt: str, parameters: Optional[Dict[Any, Any]] = None) -> str:
         payload["max_tokens"] = 4096
 
     response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload).json()
+
+    if "error" in response:
+        # raise an exception when the request fails, with the provided message
+        raise Exception(response["error"]["message"])
 
     return response["choices"][0]["message"]["content"]

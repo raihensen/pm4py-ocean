@@ -215,7 +215,7 @@ def filter_trace_attribute_values(log: Union[EventLog, pd.DataFrame], attribute_
         return attributes_filter.apply_trace_attribute(log, values, parameters=parameters)
 
 
-def filter_variants(log: Union[EventLog, pd.DataFrame], variants:  Union[Set[str], List[str]], retain: bool = True, activity_key: str = "concept:name", timestamp_key: str = "time:timestamp", case_id_key: str = "case:concept:name") -> Union[
+def filter_variants(log: Union[EventLog, pd.DataFrame], variants:  Union[Set[str], List[str], List[Tuple[str]]], retain: bool = True, activity_key: str = "concept:name", timestamp_key: str = "time:timestamp", case_id_key: str = "case:concept:name") -> Union[
     EventLog, pd.DataFrame]:
     """
     Filter a log on a specified set of variants
@@ -398,7 +398,7 @@ def filter_time_range(log: Union[EventLog, pd.DataFrame], dt1: str, dt2: str, mo
             return log
 
 
-def filter_between(log: Union[EventLog, pd.DataFrame], act1: str, act2: str, activity_key: str = "concept:name", timestamp_key: str = "time:timestamp", case_id_key: str = "case:concept:name") -> Union[EventLog, pd.DataFrame]:
+def filter_between(log: Union[EventLog, pd.DataFrame], act1: Union[str, List[str]], act2: Union[str, List[str]], activity_key: str = "concept:name", timestamp_key: str = "time:timestamp", case_id_key: str = "case:concept:name") -> Union[EventLog, pd.DataFrame]:
     """
     Finds all the sub-cases leading from an event with activity "act1" to an event with activity "act2" in the log,
     and returns a log containing only them.
@@ -421,8 +421,8 @@ def filter_between(log: Union[EventLog, pd.DataFrame], act1: str, act2: str, act
     B E F C (from the third case)
 
     :param log: event log / Pandas dataframe
-    :param act1: source activity
-    :param act2: target activity
+    :param act1: source activity  (or collection of activities)
+    :param act2: target activity  (or collection of activities)
     :param activity_key: attribute to be used for the activity
     :param timestamp_key: attribute to be used for the timestamp
     :param case_id_key: attribute to be used as case identifier
