@@ -24,9 +24,6 @@ from enum import Enum
 from pm4py.util import exec_utils, pandas_utils
 from pm4py.objects.ocel.util import ocel_consistency
 
-# Imports moved from inside functions
-import sqlite3
-
 
 class Parameters(Enum):
     ENABLE_NAMES_STRIPPING = "enable_names_stripping"
@@ -37,6 +34,8 @@ def apply(ocel: OCEL, file_path: str, parameters: Optional[Dict[Any, Any]] = Non
         parameters = {}
 
     enable_names_stripping = exec_utils.get_param_value(Parameters.ENABLE_NAMES_STRIPPING, parameters, True)
+
+    import sqlite3
 
     if os.path.exists(file_path):
         os.remove(file_path)
