@@ -28,6 +28,9 @@ from pm4py.util import constants as pm4_constants
 from pm4py.objects.log.util import dataframe_utils
 import warnings
 
+# Imports moved from inside functions
+import sqlite3
+
 
 class Parameters(Enum):
     EVENT_ID = constants.PARAM_EVENT_ID
@@ -46,8 +49,6 @@ class Parameters(Enum):
 def apply(file_path: str, parameters: Optional[Dict[Any, Any]] = None):
     if parameters is None:
         parameters = {}
-
-    import sqlite3
 
     validation = exec_utils.get_param_value(Parameters.VALIDATION, parameters, True)
     except_if_invalid = exec_utils.get_param_value(Parameters.EXCEPT_IF_INVALID, parameters, False)
@@ -120,6 +121,8 @@ def apply(file_path: str, parameters: Optional[Dict[Any, Any]] = None):
         if len(objects) == 0:
             objects = object_types_coll[object_types_coll[cumcount_field] == 0]
             object_changes = object_types_coll[object_types_coll[cumcount_field] > 0]
+        # Prevent object_changes being a slice
+        object_changes = object_changes.copy()
         if len(object_changes) == 0:
             object_changes = None
         del objects[changed_field]
