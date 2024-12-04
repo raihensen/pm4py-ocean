@@ -1,24 +1,29 @@
 '''
-    This file is part of PM4Py (More Info: https://pm4py.fit.fraunhofer.de).
+    PM4Py â€“ A Process Mining Library for Python
+Copyright (C) 2024 Process Intelligence Solutions UG (haftungsbeschrÃ¤nkt)
 
-    PM4Py is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or any later version.
 
-    PM4Py is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with PM4Py.  If not, see <https://www.gnu.org/licenses/>.
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see this software project's root or
+visit <https://www.gnu.org/licenses/>.
+
+Website: https://processintelligence.solutions
+Contact: info@processintelligence.solutions
 '''
-
+import sys
 from enum import Enum
 from pm4py.util import exec_utils
 from typing import Optional, Dict, Any
-import base64
+import base64, os
 from pm4py.util import constants
 
 
@@ -27,6 +32,7 @@ class Parameters(Enum):
     API_KEY = "api_key"
     OPENAI_MODEL = "openai_model"
     IMAGE_PATH = "image_path"
+    MAX_TOKENS = "max_tokens"
 
 
 def encode_image(image_path):
@@ -44,6 +50,7 @@ def apply(prompt: str, parameters: Optional[Dict[Any, Any]] = None) -> str:
     api_key = exec_utils.get_param_value(Parameters.API_KEY, parameters, constants.OPENAI_API_KEY)
     api_url = exec_utils.get_param_value(Parameters.API_URL, parameters, None)
     simple_content_specification = image_path is None
+    max_tokens = exec_utils.get_param_value(Parameters.MAX_TOKENS, parameters, None)
 
     if api_url is None:
         api_url = constants.OPENAI_API_URL
@@ -70,10 +77,15 @@ def apply(prompt: str, parameters: Optional[Dict[Any, Any]] = None) -> str:
     }
 
     if image_path is not None:
+        max_tokens = exec_utils.get_param_value(Parameters.MAX_TOKENS, parameters, 4096)
+        image_format = os.path.splitext(image_path)[1][1:].lower()
         base64_image = encode_image(image_path)
-        messages[0]["content"].append({"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image} "}})
-        payload["max_tokens"] = 4096
+        messages[0]["content"].append({"type": "image_url", "image_url": {"url": f"data:image/{image_format};base64,{base64_image}"}})
+        payload["max_tokens"] = max_tokens
 
+    if max_tokens is not None:
+        payload["max_tokens"] = max_tokens
+    
     payload["messages"] = messages
 
     response = requests.post(api_url+"chat/completions", headers=headers, json=payload).json()

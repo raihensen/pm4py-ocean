@@ -1,18 +1,23 @@
 '''
-    This file is part of PM4Py (More Info: https://pm4py.fit.fraunhofer.de).
+    PM4Py – A Process Mining Library for Python
+Copyright (C) 2024 Process Intelligence Solutions UG (haftungsbeschränkt)
 
-    PM4Py is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or any later version.
 
-    PM4Py is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with PM4Py.  If not, see <https://www.gnu.org/licenses/>.
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see this software project's root or
+visit <https://www.gnu.org/licenses/>.
+
+Website: https://processintelligence.solutions
+Contact: info@processintelligence.solutions
 '''
 from datetime import datetime
 from enum import Enum
@@ -22,7 +27,6 @@ import pandas as pd
 from pm4py.algo.filtering.common.timestamp.timestamp_common import get_dt_from_string
 
 from pm4py.util import exec_utils, constants, xes_constants, pandas_utils
-from statistics import mean
 
 
 class Parameters(Enum):
@@ -535,6 +539,8 @@ def average_case_duration(df: pd.DataFrame, t1: Union[datetime, str], t2: Union[
     """
     if parameters is None:
         parameters = {}
+
+    from statistics import mean
 
     resource_key = exec_utils.get_param_value(Parameters.RESOURCE_KEY, parameters, xes_constants.DEFAULT_RESOURCE_KEY)
 

@@ -1,18 +1,23 @@
 '''
-    This file is part of PM4Py (More Info: https://pm4py.fit.fraunhofer.de).
+    PM4Py – A Process Mining Library for Python
+Copyright (C) 2024 Process Intelligence Solutions UG (haftungsbeschränkt)
 
-    PM4Py is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or any later version.
 
-    PM4Py is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with PM4Py.  If not, see <https://www.gnu.org/licenses/>.
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see this software project's root or
+visit <https://www.gnu.org/licenses/>.
+
+Website: https://processintelligence.solutions
+Contact: info@processintelligence.solutions
 '''
 from pm4py.objects import log as log_lib
 from pm4py.algo.evaluation.precision import utils as precision_utils
@@ -125,8 +130,12 @@ def apply(log: Union[EventLog, EventStream, pd.DataFrame], net: PetriNet, markin
     start_activities = set(get_start_activities(log, parameters=parameters))
     trans_en_ini_marking = set([x.label for x in get_visible_transitions_eventually_enabled_by_marking(net, marking)])
     diff = trans_en_ini_marking.difference(start_activities)
-    sum_at += len(log) * len(trans_en_ini_marking)
-    sum_ee += len(log) * len(diff)
+    if type(log) is EventLog:
+        sum_at += len(log) * len(trans_en_ini_marking)
+        sum_ee += len(log) * len(diff)
+    else:
+        sum_at += log[case_id_key].nunique() * len(trans_en_ini_marking)
+        sum_ee += log[case_id_key].nunique() * len(diff)
     # end fix
 
     if sum_at > 0:

@@ -1,26 +1,29 @@
 '''
-    This file is part of PM4Py (More Info: https://pm4py.fit.fraunhofer.de).
+    PM4Py – A Process Mining Library for Python
+Copyright (C) 2024 Process Intelligence Solutions UG (haftungsbeschränkt)
 
-    PM4Py is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or any later version.
 
-    PM4Py is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with PM4Py.  If not, see <https://www.gnu.org/licenses/>.
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see this software project's root or
+visit <https://www.gnu.org/licenses/>.
+
+Website: https://processintelligence.solutions
+Contact: info@processintelligence.solutions
 '''
 from copy import copy
-from statistics import stdev
 
 from pm4py.objects.petri_net import semantics
 from pm4py.objects.petri_net.obj import PetriNet
 from pm4py.util.vis_utils import human_readable_stat, get_arc_penwidth, get_trans_freq_color
-from statistics import median, mean
 from pm4py.objects.log.obj import EventLog
 from pm4py.util.business_hours import BusinessHours
 from pm4py.util import constants
@@ -332,6 +335,9 @@ def aggregate_stats(statistics, elem, aggregation_measure):
     aggr_stat
         Aggregated statistics
     """
+    from statistics import median, mean
+    from statistics import stdev
+
     aggr_stat = 0
     if aggregation_measure == "mean" or aggregation_measure is None:
         aggr_stat = mean(statistics[elem]["performance"])
@@ -448,6 +454,8 @@ def get_transition_performance_with_token_replay(log, net, im, fm):
     transition_performance
         Dictionary where each transition label is associated to performance measures
     """
+    from statistics import median, mean, stdev
+
     from pm4py.algo.conformance.tokenreplay import algorithm as token_replay
     from pm4py.statistics.variants.log import get as variants_get
 

@@ -1,18 +1,23 @@
 '''
-    This file is part of PM4Py (More Info: https://pm4py.fit.fraunhofer.de).
+    PM4Py – A Process Mining Library for Python
+Copyright (C) 2024 Process Intelligence Solutions UG (haftungsbeschränkt)
 
-    PM4Py is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or any later version.
 
-    PM4Py is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with PM4Py.  If not, see <https://www.gnu.org/licenses/>.
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see this software project's root or
+visit <https://www.gnu.org/licenses/>.
+
+Website: https://processintelligence.solutions
+Contact: info@processintelligence.solutions
 '''
 import importlib.util
 from enum import Enum
@@ -60,16 +65,9 @@ if importlib.util.find_spec("scipy"):
     DEFAULT_LP_SOLVER_VARIANT = SCIPY
 
 if importlib.util.find_spec("cvxopt"):
-    from pm4py.util.lp.variants import cvxopt_solver, cvxopt_solver_custom_align, cvxopt_solver_custom_align_ilp, \
-        cvxopt_solver_custom_align_arm
+    from pm4py.util.lp.variants import cvxopt_solver, cvxopt_solver_custom_align, cvxopt_solver_custom_align_ilp
 
     custom_solver = cvxopt_solver_custom_align
-    try:
-        # for ARM-based Linux, we need to use a different call to GLPK
-        if "arm" in str(os.uname()[-1]):
-            custom_solver = cvxopt_solver
-    except:
-        pass
 
     CVXOPT = "cvxopt"
     CVXOPT_SOLVER_CUSTOM_ALIGN = "cvxopt_solver_custom_align"

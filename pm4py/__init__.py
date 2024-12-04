@@ -1,18 +1,23 @@
 '''
-    This file is part of PM4Py (More Info: https://pm4py.fit.fraunhofer.de).
+    PM4Py – A Process Mining Library for Python
+Copyright (C) 2024 Process Intelligence Solutions UG (haftungsbeschränkt)
 
-    PM4Py is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or any later version.
 
-    PM4Py is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with PM4Py.  If not, see <https://www.gnu.org/licenses/>.
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see this software project's root or
+visit <https://www.gnu.org/licenses/>.
+
+Website: https://processintelligence.solutions
+Contact: info@processintelligence.solutions
 '''
 import time
 
@@ -26,11 +31,12 @@ from pm4py.filtering import filter_log_relative_occurrence_event_attribute, filt
     filter_directly_follows_relation, filter_time_range, \
     filter_eventually_follows_relation, filter_event_attribute_values, filter_trace_attribute_values, \
     filter_between, filter_case_size, filter_case_performance, filter_activities_rework, filter_paths_performance, \
-    filter_variants_by_coverage_percentage, filter_variants_by_maximum_coverage_percentage, filter_variants_top_k, filter_ocel_event_attribute, filter_ocel_object_attribute, \
+    filter_variants_by_coverage_percentage, filter_variants_top_k, filter_ocel_event_attribute, filter_ocel_object_attribute, \
     filter_ocel_object_types_allowed_activities, filter_ocel_object_per_type_count, filter_ocel_start_events_per_object_type, \
     filter_ocel_end_events_per_object_type, filter_ocel_events_timestamp, filter_prefixes, filter_suffixes, filter_trace_segments, \
     filter_four_eyes_principle, filter_activity_done_different_resources, filter_ocel_events, filter_ocel_objects, \
-    filter_ocel_object_types, filter_ocel_cc_object, filter_ocel_cc_length, filter_ocel_cc_otype, filter_ocel_cc_activity
+    filter_ocel_object_types, filter_ocel_cc_object, filter_ocel_cc_length, filter_ocel_cc_otype, filter_ocel_cc_activity, \
+    filter_ocel_activities_connected_object_type
 from pm4py.discovery import discover_petri_net_alpha, discover_petri_net_alpha_plus, discover_petri_net_ilp, discover_petri_net_heuristics, \
     discover_petri_net_inductive, discover_process_tree_inductive, discover_heuristics_net, \
     discover_dfg, discover_footprints, discover_eventually_follows_graph, discover_directly_follows_graph, discover_bpmn_inductive, \
@@ -69,8 +75,7 @@ from pm4py.stats import get_start_activities, get_end_activities, get_event_attr
 from pm4py.sim import play_out, generate_process_tree
 from pm4py.ml import split_train_test, get_prefixes_from_log, extract_ocel_features, extract_features_dataframe, extract_temporal_features_dataframe, extract_outcome_enriched_dataframe, extract_target_vector
 from pm4py.org import discover_handover_of_work_network, discover_activity_based_resource_similarity, discover_subcontracting_network, discover_working_together_network, discover_organizational_roles, discover_network_analysis
-from pm4py.hof import filter_log, filter_trace, sort_trace, sort_log
-from pm4py.privacy import anonymize_differential_privacy
+#from pm4py.hof import filter_log, filter_trace, sort_trace, sort_log
 from pm4py.meta import __name__, __version__, __doc__, __author__, __author_email__, \
     __maintainer__, __maintainer_email__
 
